@@ -28,7 +28,7 @@ Because of that, an overlay-driven implementation would likely conflict with rea
 This proposal therefore avoids the shell icon overlay approach entirely and instead uses a temporary rendering layer that is shown only when requested.
 
 ## Suggested V1 scope
-- Windows 11 support.
+- Windows 11 desktop support on x64 and ARM64 systems.
 - On-demand toggle only, no always-on mode.
 - Folder-first detection in File Explorer.
 - Temporary visual markers drawn independently of shell overlays.
