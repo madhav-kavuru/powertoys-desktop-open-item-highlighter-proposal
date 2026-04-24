@@ -1,36 +1,39 @@
 # Technical Architecture Memo: On-Demand Desktop Open-Item Highlighter
 
 ## Overview
-This memo describes a non-overlay implementation for a PowerToys utility that temporarily highlights open desktop items on demand. The design avoids `IShellIconOverlayIdentifier` and instead uses desktop-item indexing, open-window detection, shell-view position lookup, and a temporary rendering layer.
+This memo outlines a non-overlay implementation approach for an on-demand PowerToys utility that temporarily highlights open desktop items. The design avoids shell overlay handlers and instead combines desktop-item indexing, open-window detection, desktop icon position lookup, and a temporary rendering layer.
+
+The goal of the architecture is to support a lightweight inspection mode that can identify open desktop items without permanently changing Explorer icon behavior or competing with existing overlay-based tools.
 
 ## System components
+
 ### Activation controller
-Owns hotkey registration, tray command handling, and active/inactive state transitions.
+The activation controller manages how the feature is invoked and dismissed. It owns hotkey registration, tray command handling, optional PowerToys UI entry points, and the active/inactive state of the mode.
 
 ### Desktop indexer
-Enumerates files, folders, and shortcuts physically present on the user desktop and stores a canonical path map.
+The desktop indexer enumerates items physically present on the user’s desktop and builds a canonical path map for matching. This includes folders, files, and shortcuts that may need to be checked against the currently open-item set.
 
 ### Open-item detector
-Enumerates relevant windows and resolves whether they correspond to desktop folders currently open in File Explorer.
+The open-item detector identifies relevant windows and determines whether they correspond to desktop items that are currently open. In V1, this logic should remain focused on desktop folders opened in File Explorer rather than attempting to identify every file type opened by every application.
 
 ### Desktop view adapter
-Uses desktop shell view APIs to map desktop items to their current icon coordinates.
+The desktop view adapter resolves the current visual position of desktop items by using supported shell-view access. Its role is to map desktop items to icon bounds so the renderer can place highlights accurately even when icon layout changes.
 
 ### Highlight renderer
-Creates and maintains a temporary transparent drawing surface positioned above the desktop.
+The highlight renderer creates and maintains the temporary visual layer used to mark open items. It should draw lightweight visual indicators above the desktop without interfering with normal icon interaction or creating a persistent visual state.
 
 ### State coordinator
-Runs update ticks while the mode is active and triggers redraw only when necessary.
+The state coordinator manages refresh timing while the mode is active. It determines when to re-check open items, when to refresh desktop layout information, and when redraw operations are necessary.
 
 ## Data flow
-1. Activation controller receives On.
-2. Desktop indexer builds current desktop path map.
-3. Open-item detector builds current open desktop set.
-4. Desktop view adapter resolves icon coordinates for desktop items.
-5. Highlight renderer draws markers for the open-item subset.
-6. State coordinator repeats detection and redraw while active.
-7. Activation controller receives Off.
-8. Renderer is destroyed and state is cleared.
+1. The activation controller receives an enable request.
+2. The desktop indexer builds or refreshes the current desktop item map.
+3. The open-item detector computes the set of desktop items that are currently open.
+4. The desktop view adapter resolves icon positions for the indexed desktop items.
+5. The highlight renderer draws markers for the subset of items that are currently open.
+6. While the mode is active, the state coordinator repeats detection and redraw checks as needed.
+7. The activation controller receives a disable request.
+8. The renderer is destroyed and temporary state is cleared.
 
 ## Key interfaces
 ```text
@@ -58,7 +61,9 @@ IHighlightRenderer
   Destroy()
 ```
 
+
 ## Pseudocode
+
 ```text
 Enable():
     index.Refresh()
@@ -84,8 +89,12 @@ Disable():
     renderer.Destroy()
 ```
 
+
 ## Implementation notes
-- Keep V1 folder-first.
-- Prefer supported shell APIs for desktop item/position handling.
-- Keep renderer isolated so failures do not corrupt desktop state.
-- Treat file detection as a later extension rather than a launch requirement.
+
+- Keep V1 focused on desktop folders first.
+- Prefer supported shell APIs for desktop item and position handling.
+- Keep the renderer isolated so failures do not corrupt desktop state.
+- Treat support for PDFs, Office files, and other non-folder item types as later extensions rather than launch requirements.
+- Optimize for correctness, low visual overhead, and safe dismissal of the temporary rendering layer.
+
