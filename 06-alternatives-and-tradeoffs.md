@@ -1,36 +1,52 @@
 # Alternatives and Tradeoffs
 
-## Shell icon overlays
-### Pros
-- Feels native to Explorer.
-- Conceptually simple at first glance.
+## Overview
+This proposal considers three broad implementation directions: shell icon overlays, always-on custom rendering, and on-demand temporary rendering. Each approach can highlight desktop state in some form, but they differ significantly in how well they fit the actual user problem, how much visual noise they create, and how safely they coexist with the existing Windows desktop environment.
 
-### Cons
-- Constrained system resource.
-- One overlay per icon.
-- Commonly conflicts with sync and version-control tools.
-- Poor fit for a temporary inspection workflow.
+The main question is not simply which option is technically possible, but which option best supports quick desktop inspection and easier desktop reorganization.
+
+## Shell icon overlays
+
+### Advantages
+- Feels superficially native to Explorer.
+- Seems conceptually simple at first glance.
+- Reuses an existing visual model that users may already recognize from sync and version-control tools.
+
+### Drawbacks
+- Shell overlay availability is constrained.
+- Only one overlay can appear per icon at a time.
+- Overlay slots are often already used by sync and version-control applications.
+- The model is a poor fit for a temporary, on-demand inspection workflow.
+- It ties the feature to a part of the shell that is already heavily contested.
 
 ## Always-on custom rendering
-### Pros
-- Avoids shell overlay slot conflict.
-- Could provide continuous awareness.
 
-### Cons
-- Adds permanent visual noise.
-- Harder to justify for casual users.
-- More likely to become distracting on crowded desktops.
+### Advantages
+- Avoids shell overlay slot conflicts.
+- Could provide continuous awareness of desktop item state.
+- Does not depend on Explorer’s overlay mechanisms.
+
+### Drawbacks
+- Adds permanent visual noise to the desktop.
+- Is harder to justify for users who only need occasional inspection.
+- Can become distracting or fatiguing on crowded desktops.
+- Moves the concept away from a lightweight utility and toward an always-present desktop layer.
 
 ## On-demand temporary rendering
-### Pros
-- Best fit for quick inspection.
+
+### Advantages
+- Best matches the intended “inspect, then dismiss” workflow.
 - Avoids shell overlay contention.
-- Desktop returns to normal immediately after use.
-- More aligned with PowerToys’ optional utility model.
+- Keeps the desktop unchanged when the feature is not in use.
+- Reduces persistent visual clutter.
+- Aligns well with the optional, utility-oriented design philosophy of PowerToys.
 
-### Cons
-- More custom rendering work than shell overlays.
-- Requires careful desktop integration and QA.
+### Drawbacks
+- Requires more custom rendering work than a simple overlay-based concept.
+- Depends on reliable desktop integration and accurate icon position handling.
+- Requires careful QA across different desktop layouts and display conditions.
 
-## Preferred option
-On-demand temporary rendering is the preferred design because it solves the real user problem while avoiding the most common practical limitation of overlay-based approaches.
+## Preferred direction
+On-demand temporary rendering is the preferred option because it solves the actual user problem more directly than the alternatives. The goal is not to create a permanent status layer on the desktop, but to give users a fast and lightweight way to identify what is already open when they need to reorganize or inspect a crowded workspace.
+
+This approach also avoids the main practical limitation of shell overlay strategies while preserving a cleaner desktop experience when the feature is inactive.
