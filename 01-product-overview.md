@@ -4,7 +4,7 @@
 On-Demand Desktop Open-Item Highlighter is a proposed PowerToys utility that helps users quickly locate which desktop items are already open by temporarily highlighting them only when requested. The feature is intended for people who use the desktop as an active workspace rather than a minimal drop zone.
 
 ## User problem
-On crowded desktops, it is difficult to tell at a glance which project folders are already open in Explorer or which important items are already in use. Windows does not currently provide a temporary "show me what is active on the desktop right now" mode for this workflow.
+On crowded desktops, it is difficult to tell at a glance which project folders are already open in Explorer or which important items are already in use. Windows does not currently provide a temporary "show me what is active on the desktop right now" mode for this workflow.  The ultimate objective is to make reorganizing the desktop easier on crowded, icon-heavy workspaces. By eventually highlighting the most common items besides folders—such as PDFs and Microsoft Office files (Word documents, spreadsheets, and PowerPoint presentations)—the utility can significantly reduce the cognitive and visual effort required to clean up. Users no longer have to repeatedly scan the desktop in search of each item of interest and remember where everything lives; instead, they can invoke the mode, see what is already open, and reorganize with less guesswork.
 
 ## Target users
 - Power users who keep 50–100+ items on the desktop.
