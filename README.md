@@ -17,7 +17,7 @@ Why this direction was chosen:
 
 ## Repository contents
 
-- [00-github-issue.md](./00-github-issue.md) — Ready-to-paste GitHub issue text for submitting the idea to the PowerToys team
+- [00-github-issue.md](./00-github-issue.md) — Feature request text formatted for creating a new PowerToys GitHub issue
 - [01-product-overview.md](./01-product-overview.md) — Product framing, user problem, target users, and core concept
 - [02-tech-spec.md](./02-tech-spec.md) — Functional scope, architecture, rendering direction, risks, and acceptance criteria
 - [03-ux-design-note.md](./03-ux-design-note.md) — Interaction model, visual behavior, UX constraints, and accessibility considerations
