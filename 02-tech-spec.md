@@ -41,24 +41,24 @@ Provide a PowerToys utility that temporarily highlights desktop items that are c
 | State coordinator | Runs update checks and redraw logic while the mode is active |
 
 ## Detection strategy
-The recommended V1 strategy is folder-first detection through open Explorer windows. `EnumWindows` can be used to enumerate top-level windows, after which Explorer-window inspection can determine which folder path each relevant window is currently displaying.[file:461]
+The recommended V1 strategy is folder-first detection through open Explorer windows. `EnumWindows` can be used to enumerate top-level windows, after which Explorer-window inspection can determine which folder path each relevant window is currently displaying.
 
-The open-item detector should compare those resolved paths against the indexed desktop contents and produce a set of active desktop paths. This keeps V1 focused on a tractable and high-value detection scenario rather than trying to identify every file type opened by every application.[file:461]
+The open-item detector should compare those resolved paths against the indexed desktop contents and produce a set of active desktop paths. This keeps V1 focused on a tractable and high-value detection scenario rather than trying to identify every file type opened by every application.
 
 ## Icon position strategy
-Desktop icon positions should be obtained through supported shell view access rather than fragile direct manipulation of the desktop list view. This keeps the implementation better aligned with Windows shell expectations and reduces the likelihood of layout-related breakage across desktop configurations.[file:461]
+Desktop icon positions should be obtained through supported shell view access rather than fragile direct manipulation of the desktop list view. This keeps the implementation better aligned with Windows shell expectations and reduces the likelihood of layout-related breakage across desktop configurations.
 
-The desktop view adapter should resolve icon bounds for known desktop items and provide those coordinates to the rendering layer. This allows highlight placement to remain tied to the actual desktop view instead of relying on static assumptions about icon layout.[file:461]
+The desktop view adapter should resolve icon bounds for known desktop items and provide those coordinates to the rendering layer. This allows highlight placement to remain tied to the actual desktop view instead of relying on static assumptions about icon layout.
 
 ## Rendering strategy
-Rendering should use a temporary transparent visual layer positioned above the desktop while the mode is active. The layer should be lightweight, minimally intrusive, and limited to drawing markers aligned to known icon bounds.[file:461]
+Rendering should use a temporary transparent visual layer positioned above the desktop while the mode is active. The layer should be lightweight, minimally intrusive, and limited to drawing markers aligned to known icon bounds.
 
-Because this approach does not rely on shell overlay handlers, it avoids competing with common overlay-heavy applications such as sync clients and version-control tools. That makes it a better fit for an on-demand “show me what is open right now” workflow.[file:461]
+Because this approach does not rely on shell overlay handlers, it avoids competing with common overlay-heavy applications such as sync clients and version-control tools. That makes it a better fit for an on-demand “show me what is open right now” workflow. 
 
 ## Candidate visual treatment
-A strong candidate for V1 is a partial corner frame: a horizontal line above the icon plus a vertical line on the right side meeting at the top-right corner. This gives a distinct active-state cue without creating a heavy full-box treatment around every highlighted icon.[file:461]
+A strong candidate for V1 is a partial corner frame: a horizontal line above the icon plus a vertical line on the right side meeting at the top-right corner. This gives a distinct active-state cue without creating a heavy full-box treatment around every highlighted icon.
 
-The visual treatment should remain legible at small icon sizes, across common wallpaper types, and on crowded desktops where many items may appear close together. It should also avoid obscuring icon labels or interfering with normal desktop interaction.[file:461]
+The visual treatment should remain legible at small icon sizes, across common wallpaper types, and on crowded desktops where many items may appear close together. It should also avoid obscuring icon labels or interfering with normal desktop interaction.
 
 ## V1 requirements
 - Activation should feel near-instant on a typical Windows 11 desktop.
@@ -71,7 +71,7 @@ The visual treatment should remain legible at small icon sizes, across common wa
 
 ## Risks
 - Transparent desktop-adjacent rendering may be difficult to implement cleanly across all Windows desktop states.
-- Desktop icon positions can change because of sorting, alignment, scaling, desktop refreshes, or monitor configuration changes.[file:461]
+- Desktop icon positions can change because of sorting, alignment, scaling, desktop refreshes, or monitor configuration changes.
 - Arbitrary file detection is substantially harder than folder detection and should not be treated as a launch assumption.
 - Multi-monitor behavior, click-through handling, and desktop interaction edge cases will require careful QA.
 
