@@ -1,7 +1,7 @@
 # Tech Spec: On-Demand Desktop Open-Item Highlighter
 
 ## Objective
-Provide a PowerToys utility that temporarily highlights desktop icons whose corresponding folders, and later optionally supported files, are currently open. The feature must work as an on-demand inspection mode and must not depend on Windows shell icon overlays.
+Provide a PowerToys utility that temporarily highlights desktop icons whose corresponding folders, and later optionally supported files, are currently open, so that users can more easily reorganize crowded desktops without repeatedly scanning for items of interest. The feature must work as an on-demand inspection mode and must not depend on Windows shell icon overlays.
 
 ## Scope
 ### In scope
