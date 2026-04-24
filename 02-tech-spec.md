@@ -1,69 +1,85 @@
 # Tech Spec: On-Demand Desktop Open-Item Highlighter
 
 ## Objective
-Provide a PowerToys utility that temporarily highlights desktop icons whose corresponding folders, and later optionally supported files, are currently open, so that users can more easily reorganize crowded desktops without repeatedly scanning for items of interest. The feature must work as an on-demand inspection mode and must not depend on Windows shell icon overlays.
+Provide a PowerToys utility that temporarily highlights desktop items that are currently open, beginning with desktop folders in V1 and allowing room for later support of common file types. The feature should help users reorganize crowded desktops more efficiently by reducing repeated visual scanning and must operate as an on-demand inspection mode rather than a persistent desktop state. The design should avoid dependence on Windows shell icon overlays.
 
 ## Scope
+
 ### In scope
-- Windows 11 support.
-- On-demand activation via hotkey, tray command, or PowerToys UI.
-- Detection of desktop folders currently open in File Explorer.
-- Temporary highlight rendering above desktop icon positions.
-- Removal of all markers when mode is disabled.
+- Windows 11 desktop support on x64 and ARM64 systems.
+- On-demand activation through a hotkey, tray command, or PowerToys UI entry point.
+- Detection of desktop folders that are currently open in File Explorer.
+- Temporary highlight rendering aligned to desktop icon positions while the mode is active.
+- Immediate removal of all highlights when the mode is turned off.
 
 ### Out of scope
-- Always-on highlighting.
-- `IShellIconOverlayIdentifier` implementation.
-- Broad support for every open file in every application.
-- Permanent modifications to Explorer icon rendering.
+- Always-on highlighting or a persistent desktop state indicator.
+- Implementation through `IShellIconOverlayIdentifier`.
+- Broad detection of every open file type across every Windows application.
+- Permanent modification of Explorer icon rendering or desktop icon appearance.
+- V1 support for PDFs and Microsoft Office files unless explicitly added in a later phase.
 
 ## User flow
 1. User activates the mode.
 2. PowerToys enumerates current desktop items.
-3. PowerToys detects which desktop folders are open.
-4. PowerToys resolves their current icon positions.
-5. PowerToys draws temporary markers on those icons.
-6. User turns the mode off.
-7. All markers disappear.
+3. PowerToys detects which desktop folders are currently open.
+4. PowerToys resolves the current icon positions of those desktop items.
+5. PowerToys renders temporary highlights on matching icons.
+6. User inspects the desktop and identifies items that are already open.
+7. User turns the mode off.
+8. All highlights disappear.
 
 ## Architecture
+
 | Component | Responsibility |
 |---|---|
-| Activation controller | Hotkey, command, tray toggle, settings state |
-| Desktop indexer | Enumerates desktop items and builds canonical path map |
-| Open-item detector | Finds open Explorer windows and matches paths |
-| Desktop view adapter | Resolves icon positions through shell view APIs |
-| Highlight renderer | Draws temporary markers in a transparent layer |
-| State coordinator | Runs update loop while mode is active |
+| Activation controller | Handles hotkey registration, tray command handling, UI invocation, and active/inactive state transitions |
+| Desktop indexer | Enumerates desktop items and builds a canonical path map for matching |
+| Open-item detector | Identifies relevant Explorer windows and resolves whether they correspond to desktop items currently open |
+| Desktop view adapter | Resolves desktop icon positions through supported shell view APIs |
+| Highlight renderer | Draws temporary visual markers in a transparent layer above the desktop |
+| State coordinator | Runs update checks and redraw logic while the mode is active |
 
 ## Detection strategy
-The recommended V1 strategy is folder-first detection using Explorer windows. `EnumWindows` can enumerate top-level windows, and Explorer-window inspection can then be used to determine which folder path each relevant window currently displays. The open-item detector should compare those paths against the indexed desktop contents and produce a set of active desktop paths.
+The recommended V1 strategy is folder-first detection through open Explorer windows. `EnumWindows` can be used to enumerate top-level windows, after which Explorer-window inspection can determine which folder path each relevant window is currently displaying.[file:461]
+
+The open-item detector should compare those resolved paths against the indexed desktop contents and produce a set of active desktop paths. This keeps V1 focused on a tractable and high-value detection scenario rather than trying to identify every file type opened by every application.[file:461]
 
 ## Icon position strategy
-Desktop icon positions should be obtained through supported shell view access rather than fragile direct manipulation of the desktop list view. Microsoft has documented `IFolderView`-based interaction with desktop items and has specifically reminded developers to use supported shell view APIs for desktop icon handling.
+Desktop icon positions should be obtained through supported shell view access rather than fragile direct manipulation of the desktop list view. This keeps the implementation better aligned with Windows shell expectations and reduces the likelihood of layout-related breakage across desktop configurations.[file:461]
+
+The desktop view adapter should resolve icon bounds for known desktop items and provide those coordinates to the rendering layer. This allows highlight placement to remain tied to the actual desktop view instead of relying on static assumptions about icon layout.[file:461]
 
 ## Rendering strategy
-Rendering should use a temporary transparent visual layer positioned above the desktop while the mode is active. The layer should be lightweight, click-through or minimally intrusive, and limited to drawing markers aligned to known icon bounds. Because this approach does not use shell overlay handlers, it avoids competing with common overlay-heavy apps such as sync clients and Tortoise tools.
+Rendering should use a temporary transparent visual layer positioned above the desktop while the mode is active. The layer should be lightweight, minimally intrusive, and limited to drawing markers aligned to known icon bounds.[file:461]
+
+Because this approach does not rely on shell overlay handlers, it avoids competing with common overlay-heavy applications such as sync clients and version-control tools. That makes it a better fit for an on-demand “show me what is open right now” workflow.[file:461]
 
 ## Candidate visual treatment
-A recommended candidate is a partial corner frame: a horizontal line above the icon plus a vertical line on the right side meeting at the top-right corner. This gives a distinct "active" cue while avoiding a full heavy rectangle around every open icon.
+A strong candidate for V1 is a partial corner frame: a horizontal line above the icon plus a vertical line on the right side meeting at the top-right corner. This gives a distinct active-state cue without creating a heavy full-box treatment around every highlighted icon.[file:461]
+
+The visual treatment should remain legible at small icon sizes, across common wallpaper types, and on crowded desktops where many items may appear close together. It should also avoid obscuring icon labels or interfering with normal desktop interaction.[file:461]
 
 ## V1 requirements
-- Activation latency should feel near-instant on a normal desktop.
-- Highlight updates should occur while the mode is active.
-- Turning the mode off must fully restore the desktop appearance.
-- No interference with OneDrive-style sync overlays or other existing Explorer overlays.
-- The feature should remain usable on crowded desktops, different icon sizes, and common DPI scales.
+- Activation should feel near-instant on a typical Windows 11 desktop.
+- The utility should correctly identify desktop folders that are currently open in File Explorer.
+- Highlight rendering should remain aligned to desktop icon positions while the mode is active.
+- Highlights should update while the mode is active as the open-item state changes.
+- Turning the mode off should immediately remove all highlights and restore the normal desktop appearance.
+- The feature should not interfere with existing Explorer overlays used by sync or version-control tools.
+- The experience should remain usable on crowded desktops, across common icon sizes, DPI scales, and multi-monitor setups.
 
 ## Risks
-- Transparent desktop-adjacent rendering can be tricky to implement cleanly.
-- Desktop icon positions can change with sorting, alignment, scaling, or monitor changes.
-- Arbitrary file detection is much harder than folder detection.
-- Multi-monitor handling and click-through behavior require careful QA.
+- Transparent desktop-adjacent rendering may be difficult to implement cleanly across all Windows desktop states.
+- Desktop icon positions can change because of sorting, alignment, scaling, desktop refreshes, or monitor configuration changes.[file:461]
+- Arbitrary file detection is substantially harder than folder detection and should not be treated as a launch assumption.
+- Multi-monitor behavior, click-through handling, and desktop interaction edge cases will require careful QA.
 
 ## Acceptance criteria
 - User can invoke the feature on demand.
 - Open desktop folders are highlighted correctly.
+- Highlights appear in the correct desktop positions for the matching items.
+- Highlights update appropriately while the mode remains active.
 - Highlights disappear immediately when the mode is disabled.
-- Existing sync or VCS overlays remain unaffected because shell overlays are not used.
+- Existing sync or version-control overlays remain unaffected because shell overlays are not used.
 - The desktop remains usable while highlights are visible.
