@@ -17,7 +17,7 @@ That direction was chosen because it:
 
 ## What’s in this repo
 
-- [00-github-issue.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/00-github-issue.md) — Ready-to-paste feature request text for the PowerToys GitHub repo
+- [00-github-issue.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/00-github-issue.md) — Feature request text for the PowerToys GitHub repo
 - [01-product-overview.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/01-product-overview.md) — Product framing, user problem, target users, and core concept
 - [02-tech-spec.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/02-tech-spec.md) — Functional scope, architecture, rendering direction, risks, and acceptance criteria
 - [03-ux-design-note.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/03-ux-design-note.md) — Interaction model, visual behavior, UX constraints, and accessibility considerations
@@ -25,20 +25,6 @@ That direction was chosen because it:
 - [05-qa-test-plan.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/05-qa-test-plan.md) — Crowded-desktop QA coverage, environments, and pass criteria
 - [06-alternatives-and-tradeoffs.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/06-alternatives-and-tradeoffs.md) — Comparison of shell overlays, always-on rendering, and on-demand rendering
 - [07-implementation-phases.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/07-implementation-phases.md) — Suggested rollout from proposal alignment to future enhancements
-
-## Suggested reading order
-
-If you want the quickest path through the proposal, start here:
-
-1. [01-product-overview.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/01-product-overview.md)
-2. [02-tech-spec.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/02-tech-spec.md)
-3. [03-ux-design-note.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/03-ux-design-note.md)
-4. [04-technical-architecture-memo.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/04-technical-architecture-memo.md)
-5. [05-qa-test-plan.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/05-qa-test-plan.md)
-6. [06-alternatives-and-tradeoffs.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/06-alternatives-and-tradeoffs.md)
-7. [07-implementation-phases.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/07-implementation-phases.md)
-
-If you want to start with the submission text first, open [00-github-issue.md](https://github.com/madhav-kavuru/powertoys-desktop-open-item-highlighter-proposal/blob/main/00-github-issue.md).
 
 ## Who this is for
 
